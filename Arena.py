@@ -41,7 +41,7 @@ class Arena():
         curPlayer = 1
         board = self.game.getInitBoard()
         it = 0
-        while self.game.getGameEnded(board, curPlayer) == 0:
+        while self.game.getGameEnded(board, curPlayer, verbose=False) == 0:
             it += 1
             if verbose:
                 assert self.display
@@ -85,6 +85,7 @@ class Arena():
                 twoWon += 1
             else:
                 draws += 1
+        print(f"one won: {oneWon}, two won: {twoWon}")
 
         self.player1, self.player2 = self.player2, self.player1
 

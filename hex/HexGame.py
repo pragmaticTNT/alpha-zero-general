@@ -60,15 +60,17 @@ class HexGame(Game):
             valids[self.n*x+y] = 1
         return np.array(valids)
 
-    def getGameEnded(self, board, player):
+    def getGameEnded(self, board, player, verbose=False):
         b = Board(self.n)
         b.pieces = np.copy(board)
-        #print(b)
-        #print(f"Player {player} has won? {b.has_path(player)}")
+        assert player == 1 or player == -1
         if b.has_path(player):
-            return player
+            return 1
         elif b.has_path(-player):
-            return -player
+            if verbose:
+                print(b)
+                print(f"Player {-player} has won? {b.has_path(-player)}")
+            return -1
         return 0
 
     def getCanonicalForm(self, board, player):
@@ -76,8 +78,17 @@ class HexGame(Game):
         assert player == 1 or player == -1
         return player * (board if player == 1 else board.transpose())
 
+    # This function does a lot more than just get the symmetries... It generates the data to be used in the training examples
     def getSymmetries(self, board, pi):
-        return []
+        sym = [(board, pi)]
+        piBoard = np.reshape(pi[:], (self.n, self.n))
+
+        xBoard = np.fliplr(board)
+        xPi = np.fliplr(piBoard)
+        yBoard = np.flipud(xBoard)
+        yPi = np.flipud(xPi)
+        sym += [(yBoard, list(yPi.ravel()))]
+        return sym
 
     def stringRepresentation(self, board):
         return board.tostring()

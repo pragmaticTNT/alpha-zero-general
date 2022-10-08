@@ -78,10 +78,10 @@ class MCTS():
 
         s = self.game.stringRepresentation(canonicalBoard)
 
-        self.game.display(canonicalBoard)
-        print(f"s in Es? {s in self.Es}")
-        if s in self.Es:
-            print(f"Es[s] = {self.Es[s]}")
+        #self.game.display(canonicalBoard)
+        #print(f"s in Es? {s in self.Es}")
+        #if s in self.Es:
+        #    print(f"Es[s] = {self.Es[s]}")
 
         if s not in self.Es:
             self.Es[s] = self.game.getGameEnded(canonicalBoard, 1)
@@ -128,7 +128,7 @@ class MCTS():
                     best_act = a
 
         a = best_act
-        print(f"valid actions: {valids}")
+        #print(f"valid actions: {valids}")
         assert a >= 0
         next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
         next_s = self.game.getCanonicalForm(next_s, next_player)
