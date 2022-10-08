@@ -1,11 +1,16 @@
 import logging
 
+import sys
+from MCTS import MCTS
+import numpy as np
+
 import coloredlogs
 
 from Coach import Coach
 ##from othello.OthelloGame import OthelloGame as Game
 ##from othello.pytorch.NNet import NNetWrapper as nn
 from hex.HexGame import HexGame as Game
+from hex.HexLogic import Board
 from hex.pytorch.NNet import NNetWrapper as nn
 from utils import *
 
@@ -30,11 +35,7 @@ args = dotdict({
 
 })
 
-
-def main():
-    log.info('Loading %s...', Game.__name__)
-    g = Game(6)
-
+def load_nn(g):
     log.info('Loading %s...', nn.__name__)
     nnet = nn(g)
 
@@ -43,6 +44,13 @@ def main():
         nnet.load_checkpoint(args.load_folder_file[0], args.load_folder_file[1])
     else:
         log.warning('Not loading a checkpoint!')
+    return nnet
+
+def main():
+    log.info('Loading %s...', Game.__name__)
+    g = Game(6)
+
+    nnet = load_nn(g)
 
     log.info('Loading the Coach...')
     c = Coach(g, nnet, args)
@@ -54,6 +62,31 @@ def main():
     log.info('Starting the learning process 🎉')
     c.learn()
 
+def interactive_protocol_loop():
+    while command := input():
+        command = command.split()
+        log.info(command)
+        if command[0] != "start":
+            raise "Unexpected command"
+        
+        g = Game(int(command[1]))
+        log.info(g.n)
+        board = Board(g.n)
+        curPlayer = 1
+        for action in command[2:]:
+            int_action = int(action)
+            x, y = int_action//g.n, int_action%g.n 
+            board.execute_move((x,y), curPlayer)
+            curPlayer = -curPlayer
+
+        nnet = load_nn(g)
+        args = dotdict({'numMCTSSims': 800, 'cpuct':1.0})
+        mcts = MCTS(g, nnet, args)
+        player = lambda x: np.argmax(mcts.getActionProb(x, temp=0))
+        action = player(g.getCanonicalForm(np.array(board.pieces), curPlayer))
+        action = action if curPlayer == 1 else g.transpose_act(action)
+        print(action)
 
 if __name__ == "__main__":
-    main()
+    interactive_protocol_loop()
+    # main()

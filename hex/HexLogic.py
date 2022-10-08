@@ -22,7 +22,7 @@ class Board():
         self.n = n
         # print(self.n)
         # Create the empty board array.
-        self.pieces = [[0 for _ in range(self.n)] for _ in range(self.n)]
+        self.pieces = np.array([[0 for _ in range(self.n)] for _ in range(self.n)])
         # print(self.pieces)
 
     # add [][] indexer syntax to the Board
