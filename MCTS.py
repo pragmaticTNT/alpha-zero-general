@@ -38,16 +38,12 @@ class MCTS():
             self.search(canonicalBoard)
 
         s = self.game.stringRepresentation(canonicalBoard)
-        #print(f"Nsa: {len(self.Nsa)}")
-        #print(sum(map(lambda a: (s, a) in self.Nsa, range(self.game.getActionSize()))))
-        #for (s, a) in self.Nsa.keys():
-        #    print(np.frombuffer(s, dtype='<i8').reshape((5,5)))
         counts = [self.Nsa[(s, a)] if (s, a) in self.Nsa else 0 for a in range(self.game.getActionSize())]
 
         if temp == 0:
             bestAs = np.array(np.argwhere(counts == np.max(counts))).flatten()
             bestA = np.random.choice(bestAs)
-            probs = [0 for _ in range(len(counts))]
+            probs = [0] * len(counts)
             probs[bestA] = 1
             return probs
 
@@ -78,11 +74,6 @@ class MCTS():
 
         s = self.game.stringRepresentation(canonicalBoard)
 
-        #self.game.display(canonicalBoard)
-        #print(f"s in Es? {s in self.Es}")
-        #if s in self.Es:
-        #    print(f"Es[s] = {self.Es[s]}")
-
         if s not in self.Es:
             self.Es[s] = self.game.getGameEnded(canonicalBoard, 1)
         if self.Es[s] != 0:
@@ -101,7 +92,7 @@ class MCTS():
                 # if all valid moves were masked make all valid moves equally probable
 
                 # NB! All valid moves may be masked if either your NNet architecture is insufficient or you've get overfitting or something else.
-                # If you have got dozens or hundreds of these messages you should pay attention to your NNet and/or training process.
+                # If you have got dozens or hundreds of these messages you should pay attention to your NNet and/or training process.   
                 log.error("All valid moves were masked, doing a workaround.")
                 self.Ps[s] = self.Ps[s] + valids
                 self.Ps[s] /= np.sum(self.Ps[s])
@@ -128,8 +119,6 @@ class MCTS():
                     best_act = a
 
         a = best_act
-        #print(f"valid actions: {valids}")
-        assert a >= 0
         next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
         next_s = self.game.getCanonicalForm(next_s, next_player)
 
