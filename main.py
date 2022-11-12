@@ -144,5 +144,5 @@ def writePgn(results:tuple[int, int, int], oldId: int, newId: int, filename:str=
             f.write(f'[White "Net {oldId}"]\n[Black "Net {newId}"]\n[Result "1/2-1/2"]\n{filler}')
 
 if __name__ == "__main__":
-    interactive_protocol_loop()
-    # main()
+    # interactive_protocol_loop()
+    main()
