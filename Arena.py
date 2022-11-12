@@ -97,5 +97,6 @@ class Arena():
                 twoWon += 1
             else:
                 draws += 1
+        print(f"one won: {oneWon}, two won: {twoWon}")
 
         return oneWon, twoWon, draws
